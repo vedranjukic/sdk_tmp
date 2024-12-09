@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Daytona } from '@daytona/sdk';
 
 async function main() {
@@ -9,13 +10,9 @@ async function main() {
       language: 'python'
     })
 
-    //  now, run some code
-    const result = await workspace.codeRun('print("Hello World! " + str(3 + 4))');
-    if (result.code !== 0) {
-      console.error('Error running code:', result.code);
-    } else {
-      console.log(result.result)
-    }
+    const projectDir = await workspace.getProjectDir()
+
+   await workspace.gitClone('https://github.com/panaverse/learn-typescript', path.join(projectDir, 'learn-typescript'));
 
     //  we're done, remove the workspace
     await daytona.remove(workspace);

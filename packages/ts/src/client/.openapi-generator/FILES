@@ -11,6 +11,7 @@ apis/SampleApi.ts
 apis/ServerApi.ts
 apis/TargetApi.ts
 apis/WorkspaceApi.ts
+apis/WorkspaceToolboxApi.ts
 apis/index.ts
 index.ts
 models/ApiKey.ts
@@ -37,9 +38,13 @@ models/FileInfo.ts
 models/FileStatus.ts
 models/GetRepositoryContext.ts
 models/GitBranch.ts
+models/GitBranchRequest.ts
+models/GitCloneRequest.ts
+models/GitCommitRequest.ts
 models/GitNamespace.ts
 models/GitProvider.ts
 models/GitPullRequest.ts
+models/GitPushRequest.ts
 models/GitRepository.ts
 models/GitStatus.ts
 models/GitUser.ts
@@ -58,6 +63,7 @@ models/PrebuildDTO.ts
 models/ProfileData.ts
 models/Project.ts
 models/ProjectConfig.ts
+models/ProjectDirResponse.ts
 models/ProjectInfo.ts
 models/ProjectState.ts
 models/Provider.ts

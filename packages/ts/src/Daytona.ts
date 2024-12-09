@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { WorkspacePythonCodeToolbox } from "./code-toolbox/WorkspacePythonCodeToolbox";
 import { Workspace, WorkspaceCodeToolbox } from "./Workspace";
-import { Configuration, WorkspaceApi, GitProviderApi, CreateProjectDTO } from "./client"
+import { Configuration, WorkspaceApi, GitProviderApi, WorkspaceToolboxApi, CreateProjectDTO } from "./client"
 
 interface DaytonaConfig {
   apiKey: string;
@@ -21,6 +21,7 @@ type CreateWorkspaceParams = {
 export class Daytona {
   public readonly gitProviderApi: GitProviderApi;
   public readonly workspaceApi: WorkspaceApi;
+  public readonly toolboxApi: WorkspaceToolboxApi;
   public readonly target: string;
 
   private readonly apiKey: string;
@@ -51,6 +52,7 @@ export class Daytona {
 
     this.gitProviderApi = new GitProviderApi(configuration)
     this.workspaceApi = new WorkspaceApi(configuration)
+    this.toolboxApi = new WorkspaceToolboxApi(configuration)
   }
 
   public async create(params?: CreateWorkspaceParams): Promise<Workspace> {
@@ -87,8 +89,6 @@ export class Daytona {
     ]
 
     const workspaceInstance = await this.workspaceApi.createWorkspace({
-      
-
       workspace: {
         id: workspaceId,
         name: workspaceId,  //  todo: remove this after project refactor
@@ -97,7 +97,7 @@ export class Daytona {
       }
     })
 
-    const workspace = new Workspace(workspaceId, workspaceInstance, this.workspaceApi, this.gitProviderApi, codeToolbox)
+    const workspace = new Workspace(workspaceId, workspaceInstance, this.toolboxApi, this.gitProviderApi, codeToolbox)
 
     return workspace
   }

@@ -13,3 +13,4 @@ export * from './SampleApi';
 export * from './ServerApi';
 export * from './TargetApi';
 export * from './WorkspaceApi';
+export * from './WorkspaceToolboxApi';

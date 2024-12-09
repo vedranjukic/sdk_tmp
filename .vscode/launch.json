@@ -24,6 +24,18 @@
             "cwd": "${workspaceRoot}",
             "console": "integratedTerminal",
             "protocol": "inspector"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Git Lsp Example",
+            "args": ["${workspaceFolder}/examples/ts/git-lsp/src"],
+            "runtimeArgs": ["--nolazy", "-r", "ts-node/register", "-r", "tsconfig-paths/register"],
+            "sourceMaps": true,
+            "envFile": "${workspaceFolder}/.env.local",
+            "cwd": "${workspaceRoot}",
+            "console": "integratedTerminal",
+            "protocol": "inspector"
         }
     ]
 }
