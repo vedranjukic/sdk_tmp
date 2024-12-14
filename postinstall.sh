@@ -14,4 +14,7 @@ yarn link
 cd ../../examples/ts/exec-command
 yarn link @daytona/sdk
 
+# Init python
+python3 -m pip install -e packages/python
+
 echo "Post-install completed successfully"

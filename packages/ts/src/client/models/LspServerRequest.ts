@@ -25,6 +25,12 @@ export interface LspServerRequest {
      * @memberof LspServerRequest
      */
     languageId: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LspServerRequest
+     */
+    pathToProject: string;
 }
 
 /**
@@ -32,6 +38,7 @@ export interface LspServerRequest {
  */
 export function instanceOfLspServerRequest(value: object): value is LspServerRequest {
     if (!('languageId' in value) || value['languageId'] === undefined) return false;
+    if (!('pathToProject' in value) || value['pathToProject'] === undefined) return false;
     return true;
 }
 
@@ -46,6 +53,7 @@ export function LspServerRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
     return {
         
         'languageId': json['languageId'],
+        'pathToProject': json['pathToProject'],
     };
 }
 
@@ -61,6 +69,7 @@ export function LspServerRequestToJSONTyped(value?: LspServerRequest | null, ign
     return {
         
         'languageId': value['languageId'],
+        'pathToProject': value['pathToProject'],
     };
 }
 

@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkspacePythonCodeToolbox } from "./code-toolbox/WorkspacePythonCodeToolbox";
-import { Workspace, WorkspaceCodeToolbox } from "./Workspace";
+import { Workspace } from "./Workspace";
 import { Configuration, WorkspaceApi, GitProviderApi, WorkspaceToolboxApi, CreateProjectDTO } from "./client"
+import { WorkspaceTsCodeToolbox } from './code-toolbox/WorkspaceTsCodeToolbox';
 
 interface DaytonaConfig {
   apiKey: string;
@@ -11,10 +12,11 @@ interface DaytonaConfig {
 }
 
 //  type CodeLanguage = 'python' | 'javascript' | 'typescript' | 'java' | 'csharp' | 'go' | 'ruby' | 'php' | 'swift' | 'kotlin' | 'rust' | 'scala' | 'r' | 'perl' | 'bash' | 'powershell' | 'sql' | 'html' | 'css' | 'json' | 'yaml' | 'xml' | 'markdown' | 'plaintext'
-type CodeLanguage = 'python'
+type CodeLanguage = 'python' | 'javascript' | 'typescript'
 
 type CreateWorkspaceParams = {
   id?: string
+  image?: string
   language: CodeLanguage
 }
 
@@ -64,6 +66,9 @@ export class Daytona {
         return new WorkspacePythonCodeToolbox()
       }
       switch (params?.language) {
+        case 'javascript':
+        case 'typescript':
+          return new WorkspaceTsCodeToolbox()
         case 'python':
           return new WorkspacePythonCodeToolbox()
         default:
@@ -71,19 +76,27 @@ export class Daytona {
       }
     })()
 
-    const repository = await this.gitProviderApi.getGitContext({
-      repository: {
-        url: 'https://github.com/dbarnett/python-helloworld'
-      }
-    })
-
     const projects: CreateProjectDTO[] = [
       {
         name: 'main',
-        image: codeToolbox.getDefaultImage(),
-        envVars: {},
+        image: params?.image || codeToolbox.getDefaultImage(),
+        envVars: {
+          DAYTONA_SKIP_CLONE: 'true'
+        },
         source: {
-          repository
+          //  todo: remove when repo is not required
+          repository: {
+            branch: 'main',
+            cloneTarget: 'branch',
+            id: 'python-helloworld',
+            name: 'python-helloworld',
+            owner: 'dbarnett',
+            path: undefined,
+            prNumber: undefined,
+            sha: '288d7ced1b971fd1b3b0c36002b96e1c3f91542e',
+            source: 'github.com',
+            url: 'https://github.com/dbarnett/python-helloworld.git'
+          }
         },
       }
     ]
@@ -97,7 +110,7 @@ export class Daytona {
       }
     })
 
-    const workspace = new Workspace(workspaceId, workspaceInstance, this.toolboxApi, this.gitProviderApi, codeToolbox)
+    const workspace = new Workspace(workspaceId, workspaceInstance, this.toolboxApi, codeToolbox)
 
     return workspace
   }

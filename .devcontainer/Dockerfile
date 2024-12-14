@@ -8,6 +8,6 @@ RUN apt update && export DEBIAN_FRONTEND=noninteractive \
 
 # build tools
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install --no-install-recommends openjdk-11-jdk protobuf-compiler libprotobuf-dev
+    && apt -y install --no-install-recommends openjdk-11-jdk protobuf-compiler libprotobuf-dev python3-pip
 
 CMD ["tail", "-f", "/dev/null"]

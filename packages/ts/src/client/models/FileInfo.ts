@@ -24,55 +24,63 @@ export interface FileInfo {
      * @type {string}
      * @memberof FileInfo
      */
-    group?: string;
+    group: string;
     /**
      * 
      * @type {boolean}
      * @memberof FileInfo
      */
-    isDir?: boolean;
+    isDir: boolean;
     /**
      * 
      * @type {string}
      * @memberof FileInfo
      */
-    modTime?: string;
+    modTime: string;
     /**
      * 
      * @type {string}
      * @memberof FileInfo
      */
-    mode?: string;
+    mode: string;
     /**
      * 
      * @type {string}
      * @memberof FileInfo
      */
-    name?: string;
+    name: string;
     /**
      * 
      * @type {string}
      * @memberof FileInfo
      */
-    owner?: string;
+    owner: string;
     /**
      * 
      * @type {string}
      * @memberof FileInfo
      */
-    permissions?: string;
+    permissions: string;
     /**
      * 
      * @type {number}
      * @memberof FileInfo
      */
-    size?: number;
+    size: number;
 }
 
 /**
  * Check if a given object implements the FileInfo interface.
  */
 export function instanceOfFileInfo(value: object): value is FileInfo {
+    if (!('group' in value) || value['group'] === undefined) return false;
+    if (!('isDir' in value) || value['isDir'] === undefined) return false;
+    if (!('modTime' in value) || value['modTime'] === undefined) return false;
+    if (!('mode' in value) || value['mode'] === undefined) return false;
+    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('owner' in value) || value['owner'] === undefined) return false;
+    if (!('permissions' in value) || value['permissions'] === undefined) return false;
+    if (!('size' in value) || value['size'] === undefined) return false;
     return true;
 }
 
@@ -86,14 +94,14 @@ export function FileInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'group': json['group'] == null ? undefined : json['group'],
-        'isDir': json['isDir'] == null ? undefined : json['isDir'],
-        'modTime': json['modTime'] == null ? undefined : json['modTime'],
-        'mode': json['mode'] == null ? undefined : json['mode'],
-        'name': json['name'] == null ? undefined : json['name'],
-        'owner': json['owner'] == null ? undefined : json['owner'],
-        'permissions': json['permissions'] == null ? undefined : json['permissions'],
-        'size': json['size'] == null ? undefined : json['size'],
+        'group': json['group'],
+        'isDir': json['isDir'],
+        'modTime': json['modTime'],
+        'mode': json['mode'],
+        'name': json['name'],
+        'owner': json['owner'],
+        'permissions': json['permissions'],
+        'size': json['size'],
     };
 }
 

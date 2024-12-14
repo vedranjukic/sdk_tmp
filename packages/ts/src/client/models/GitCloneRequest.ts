@@ -42,13 +42,13 @@ export interface GitCloneRequest {
      * @type {string}
      * @memberof GitCloneRequest
      */
-    path?: string;
+    path: string;
     /**
      * 
      * @type {string}
      * @memberof GitCloneRequest
      */
-    url?: string;
+    url: string;
     /**
      * 
      * @type {string}
@@ -61,6 +61,8 @@ export interface GitCloneRequest {
  * Check if a given object implements the GitCloneRequest interface.
  */
 export function instanceOfGitCloneRequest(value: object): value is GitCloneRequest {
+    if (!('path' in value) || value['path'] === undefined) return false;
+    if (!('url' in value) || value['url'] === undefined) return false;
     return true;
 }
 
@@ -77,8 +79,8 @@ export function GitCloneRequestFromJSONTyped(json: any, ignoreDiscriminator: boo
         'branch': json['branch'] == null ? undefined : json['branch'],
         'commitId': json['commit_id'] == null ? undefined : json['commit_id'],
         'password': json['password'] == null ? undefined : json['password'],
-        'path': json['path'] == null ? undefined : json['path'],
-        'url': json['url'] == null ? undefined : json['url'],
+        'path': json['path'],
+        'url': json['url'],
         'username': json['username'] == null ? undefined : json['username'],
     };
 }

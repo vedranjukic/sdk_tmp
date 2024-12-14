@@ -15,47 +15,74 @@
 
 import * as runtime from '../runtime';
 import type {
+  CompletionList,
   ExecuteRequest,
   ExecuteResponse,
   FileInfo,
+  GitAddRequest,
   GitBranchRequest,
   GitCloneRequest,
+  GitCommitInfo,
   GitCommitRequest,
-  GitPushRequest,
+  GitCommitResponse,
+  GitRepoRequest,
+  GitStatus,
+  ListBranchResponse,
   LspCompletionParams,
   LspDocumentRequest,
   LspServerRequest,
+  LspSymbol,
   Match,
   ProjectDirResponse,
   ReplaceRequest,
+  ReplaceResult,
+  SearchFilesResponse,
 } from '../models/index';
 import {
+    CompletionListFromJSON,
+    CompletionListToJSON,
     ExecuteRequestFromJSON,
     ExecuteRequestToJSON,
     ExecuteResponseFromJSON,
     ExecuteResponseToJSON,
     FileInfoFromJSON,
     FileInfoToJSON,
+    GitAddRequestFromJSON,
+    GitAddRequestToJSON,
     GitBranchRequestFromJSON,
     GitBranchRequestToJSON,
     GitCloneRequestFromJSON,
     GitCloneRequestToJSON,
+    GitCommitInfoFromJSON,
+    GitCommitInfoToJSON,
     GitCommitRequestFromJSON,
     GitCommitRequestToJSON,
-    GitPushRequestFromJSON,
-    GitPushRequestToJSON,
+    GitCommitResponseFromJSON,
+    GitCommitResponseToJSON,
+    GitRepoRequestFromJSON,
+    GitRepoRequestToJSON,
+    GitStatusFromJSON,
+    GitStatusToJSON,
+    ListBranchResponseFromJSON,
+    ListBranchResponseToJSON,
     LspCompletionParamsFromJSON,
     LspCompletionParamsToJSON,
     LspDocumentRequestFromJSON,
     LspDocumentRequestToJSON,
     LspServerRequestFromJSON,
     LspServerRequestToJSON,
+    LspSymbolFromJSON,
+    LspSymbolToJSON,
     MatchFromJSON,
     MatchToJSON,
     ProjectDirResponseFromJSON,
     ProjectDirResponseToJSON,
     ReplaceRequestFromJSON,
     ReplaceRequestToJSON,
+    ReplaceResultFromJSON,
+    ReplaceResultToJSON,
+    SearchFilesResponseFromJSON,
+    SearchFilesResponseToJSON,
 } from '../models/index';
 
 export interface FsCreateFolderRequest {
@@ -137,6 +164,12 @@ export interface GetProjectDirRequest {
     projectId: string;
 }
 
+export interface GitAddFilesRequest {
+    workspaceId: string;
+    projectId: string;
+    params: GitAddRequest;
+}
+
 export interface GitBranchListRequest {
     workspaceId: string;
     projectId: string;
@@ -173,10 +206,16 @@ export interface GitGitStatusRequest {
     path: string;
 }
 
+export interface GitPullChangesRequest {
+    workspaceId: string;
+    projectId: string;
+    params: GitRepoRequest;
+}
+
 export interface GitPushChangesRequest {
     workspaceId: string;
     projectId: string;
-    params: GitPushRequest;
+    params: GitRepoRequest;
 }
 
 export interface LspCompletionsRequest {
@@ -188,38 +227,40 @@ export interface LspCompletionsRequest {
 export interface LspDidCloseRequest {
     workspaceId: string;
     projectId: string;
-    server: LspDocumentRequest;
+    params: LspDocumentRequest;
 }
 
 export interface LspDidOpenRequest {
     workspaceId: string;
     projectId: string;
-    server: LspDocumentRequest;
+    params: LspDocumentRequest;
 }
 
 export interface LspDocumentSymbolsRequest {
     workspaceId: string;
     projectId: string;
     languageId: string;
+    pathToProject: string;
     uri: string;
 }
 
 export interface LspStartRequest {
     workspaceId: string;
     projectId: string;
-    server: LspServerRequest;
+    params: LspServerRequest;
 }
 
 export interface LspStopRequest {
     workspaceId: string;
     projectId: string;
-    server: LspServerRequest;
+    params: LspServerRequest;
 }
 
 export interface LspWorkspaceSymbolsRequest {
     workspaceId: string;
     projectId: string;
     languageId: string;
+    pathToProject: string;
     query: string;
 }
 
@@ -660,7 +701,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Repleace text/pattern in mutilple files inside workspace project
      * Repleace text/pattern in files
      */
-    async fsReplaceInFilesRaw(requestParameters: FsReplaceInFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async fsReplaceInFilesRaw(requestParameters: FsReplaceInFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ReplaceResult>>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -700,14 +741,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             body: ReplaceRequestToJSON(requestParameters['replace']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ReplaceResultFromJSON));
     }
 
     /**
      * Repleace text/pattern in mutilple files inside workspace project
      * Repleace text/pattern in files
      */
-    async fsReplaceInFiles(requestParameters: FsReplaceInFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async fsReplaceInFiles(requestParameters: FsReplaceInFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ReplaceResult>> {
         const response = await this.fsReplaceInFilesRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -716,7 +757,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Search for files inside workspace project
      * Search for files
      */
-    async fsSearchFilesRaw(requestParameters: FsSearchFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string>>> {
+    async fsSearchFilesRaw(requestParameters: FsSearchFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SearchFilesResponse>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -768,14 +809,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => SearchFilesResponseFromJSON(jsonValue));
     }
 
     /**
      * Search for files inside workspace project
      * Search for files
      */
-    async fsSearchFiles(requestParameters: FsSearchFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>> {
+    async fsSearchFiles(requestParameters: FsSearchFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SearchFilesResponse> {
         const response = await this.fsSearchFilesRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -979,10 +1020,65 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
     }
 
     /**
+     * Add files to git commit
+     * Add files
+     */
+    async gitAddFilesRaw(requestParameters: GitAddFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['workspaceId'] == null) {
+            throw new runtime.RequiredError(
+                'workspaceId',
+                'Required parameter "workspaceId" was null or undefined when calling gitAddFiles().'
+            );
+        }
+
+        if (requestParameters['projectId'] == null) {
+            throw new runtime.RequiredError(
+                'projectId',
+                'Required parameter "projectId" was null or undefined when calling gitAddFiles().'
+            );
+        }
+
+        if (requestParameters['params'] == null) {
+            throw new runtime.RequiredError(
+                'params',
+                'Required parameter "params" was null or undefined when calling gitAddFiles().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/workspace/{workspaceId}/{projectId}/toolbox/git/add`.replace(`{${"workspaceId"}}`, encodeURIComponent(String(requestParameters['workspaceId']))).replace(`{${"projectId"}}`, encodeURIComponent(String(requestParameters['projectId']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GitAddRequestToJSON(requestParameters['params']),
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Add files to git commit
+     * Add files
+     */
+    async gitAddFiles(requestParameters: GitAddFilesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.gitAddFilesRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Get branch list from git repository inside workspace project
      * Get branch list
      */
-    async gitBranchListRaw(requestParameters: GitBranchListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitBranchListRaw(requestParameters: GitBranchListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListBranchResponse>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1023,14 +1119,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ListBranchResponseFromJSON(jsonValue));
     }
 
     /**
      * Get branch list from git repository inside workspace project
      * Get branch list
      */
-    async gitBranchList(requestParameters: GitBranchListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async gitBranchList(requestParameters: GitBranchListRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListBranchResponse> {
         const response = await this.gitBranchListRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1039,7 +1135,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Clone git repository inside workspace project
      * Clone git repository
      */
-    async gitCloneRepositoryRaw(requestParameters: GitCloneRepositoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitCloneRepositoryRaw(requestParameters: GitCloneRepositoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1079,23 +1175,22 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             body: GitCloneRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Clone git repository inside workspace project
      * Clone git repository
      */
-    async gitCloneRepository(requestParameters: GitCloneRepositoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.gitCloneRepositoryRaw(requestParameters, initOverrides);
-        return await response.value();
+    async gitCloneRepository(requestParameters: GitCloneRepositoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.gitCloneRepositoryRaw(requestParameters, initOverrides);
     }
 
     /**
      * Commit changes to git repository inside workspace project
      * Commit changes
      */
-    async gitCommitChangesRaw(requestParameters: GitCommitChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitCommitChangesRaw(requestParameters: GitCommitChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GitCommitResponse>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1135,14 +1230,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             body: GitCommitRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GitCommitResponseFromJSON(jsonValue));
     }
 
     /**
      * Commit changes to git repository inside workspace project
      * Commit changes
      */
-    async gitCommitChanges(requestParameters: GitCommitChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async gitCommitChanges(requestParameters: GitCommitChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GitCommitResponse> {
         const response = await this.gitCommitChangesRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1151,7 +1246,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Get commit history from git repository inside workspace project
      * Get commit history
      */
-    async gitCommitHistoryRaw(requestParameters: GitCommitHistoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitCommitHistoryRaw(requestParameters: GitCommitHistoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GitCommitInfo>>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1192,14 +1287,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GitCommitInfoFromJSON));
     }
 
     /**
      * Get commit history from git repository inside workspace project
      * Get commit history
      */
-    async gitCommitHistory(requestParameters: GitCommitHistoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async gitCommitHistory(requestParameters: GitCommitHistoryRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GitCommitInfo>> {
         const response = await this.gitCommitHistoryRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1208,7 +1303,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Create branch on git repository inside workspace project
      * Create branch
      */
-    async gitCreateBranchRaw(requestParameters: GitCreateBranchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitCreateBranchRaw(requestParameters: GitCreateBranchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1248,23 +1343,22 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             body: GitBranchRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Create branch on git repository inside workspace project
      * Create branch
      */
-    async gitCreateBranch(requestParameters: GitCreateBranchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.gitCreateBranchRaw(requestParameters, initOverrides);
-        return await response.value();
+    async gitCreateBranch(requestParameters: GitCreateBranchRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.gitCreateBranchRaw(requestParameters, initOverrides);
     }
 
     /**
      * Get status from git repository inside workspace project
      * Get git status
      */
-    async gitGitStatusRaw(requestParameters: GitGitStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitGitStatusRaw(requestParameters: GitGitStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GitStatus>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1305,23 +1399,78 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GitStatusFromJSON(jsonValue));
     }
 
     /**
      * Get status from git repository inside workspace project
      * Get git status
      */
-    async gitGitStatus(requestParameters: GitGitStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async gitGitStatus(requestParameters: GitGitStatusRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GitStatus> {
         const response = await this.gitGitStatusRaw(requestParameters, initOverrides);
         return await response.value();
+    }
+
+    /**
+     * Pull changes from remote to git repository inside workspace project
+     * Pull changes
+     */
+    async gitPullChangesRaw(requestParameters: GitPullChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters['workspaceId'] == null) {
+            throw new runtime.RequiredError(
+                'workspaceId',
+                'Required parameter "workspaceId" was null or undefined when calling gitPullChanges().'
+            );
+        }
+
+        if (requestParameters['projectId'] == null) {
+            throw new runtime.RequiredError(
+                'projectId',
+                'Required parameter "projectId" was null or undefined when calling gitPullChanges().'
+            );
+        }
+
+        if (requestParameters['params'] == null) {
+            throw new runtime.RequiredError(
+                'params',
+                'Required parameter "params" was null or undefined when calling gitPullChanges().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["Authorization"] = await this.configuration.apiKey("Authorization"); // Bearer authentication
+        }
+
+        const response = await this.request({
+            path: `/workspace/{workspaceId}/{projectId}/toolbox/git/pull`.replace(`{${"workspaceId"}}`, encodeURIComponent(String(requestParameters['workspaceId']))).replace(`{${"projectId"}}`, encodeURIComponent(String(requestParameters['projectId']))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GitRepoRequestToJSON(requestParameters['params']),
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Pull changes from remote to git repository inside workspace project
+     * Pull changes
+     */
+    async gitPullChanges(requestParameters: GitPullChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.gitPullChangesRaw(requestParameters, initOverrides);
     }
 
     /**
      * Push changes to remote from git repository inside workspace project
      * Push changes
      */
-    async gitPushChangesRaw(requestParameters: GitPushChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async gitPushChangesRaw(requestParameters: GitPushChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1358,26 +1507,25 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: GitPushRequestToJSON(requestParameters['params']),
+            body: GitRepoRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Push changes to remote from git repository inside workspace project
      * Push changes
      */
-    async gitPushChanges(requestParameters: GitPushChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.gitPushChangesRaw(requestParameters, initOverrides);
-        return await response.value();
+    async gitPushChanges(requestParameters: GitPushChangesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.gitPushChangesRaw(requestParameters, initOverrides);
     }
 
     /**
      * The Completion request is sent from the client to the server to compute completion items at a given cursor position.
      * Get Lsp Completions
      */
-    async lspCompletionsRaw(requestParameters: LspCompletionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspCompletionsRaw(requestParameters: LspCompletionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CompletionList>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1417,14 +1565,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             body: LspCompletionParamsToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => CompletionListFromJSON(jsonValue));
     }
 
     /**
      * The Completion request is sent from the client to the server to compute completion items at a given cursor position.
      * Get Lsp Completions
      */
-    async lspCompletions(requestParameters: LspCompletionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async lspCompletions(requestParameters: LspCompletionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CompletionList> {
         const response = await this.lspCompletionsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1433,7 +1581,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * The document close notification is sent from the client to the server when the document got closed in the client.
      * Call Lsp DidClose
      */
-    async lspDidCloseRaw(requestParameters: LspDidCloseRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspDidCloseRaw(requestParameters: LspDidCloseRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1448,10 +1596,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['server'] == null) {
+        if (requestParameters['params'] == null) {
             throw new runtime.RequiredError(
-                'server',
-                'Required parameter "server" was null or undefined when calling lspDidClose().'
+                'params',
+                'Required parameter "params" was null or undefined when calling lspDidClose().'
             );
         }
 
@@ -1470,26 +1618,25 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: LspDocumentRequestToJSON(requestParameters['server']),
+            body: LspDocumentRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * The document close notification is sent from the client to the server when the document got closed in the client.
      * Call Lsp DidClose
      */
-    async lspDidClose(requestParameters: LspDidCloseRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.lspDidCloseRaw(requestParameters, initOverrides);
-        return await response.value();
+    async lspDidClose(requestParameters: LspDidCloseRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.lspDidCloseRaw(requestParameters, initOverrides);
     }
 
     /**
      * The document open notification is sent from the client to the server to signal newly opened text documents.
      * Call Lsp DidOpen
      */
-    async lspDidOpenRaw(requestParameters: LspDidOpenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspDidOpenRaw(requestParameters: LspDidOpenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1504,10 +1651,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['server'] == null) {
+        if (requestParameters['params'] == null) {
             throw new runtime.RequiredError(
-                'server',
-                'Required parameter "server" was null or undefined when calling lspDidOpen().'
+                'params',
+                'Required parameter "params" was null or undefined when calling lspDidOpen().'
             );
         }
 
@@ -1526,26 +1673,25 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: LspDocumentRequestToJSON(requestParameters['server']),
+            body: LspDocumentRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * The document open notification is sent from the client to the server to signal newly opened text documents.
      * Call Lsp DidOpen
      */
-    async lspDidOpen(requestParameters: LspDidOpenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.lspDidOpenRaw(requestParameters, initOverrides);
-        return await response.value();
+    async lspDidOpen(requestParameters: LspDidOpenRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.lspDidOpenRaw(requestParameters, initOverrides);
     }
 
     /**
      * The document symbol request is sent from the client to the server.
      * Call Lsp DocumentSymbols
      */
-    async lspDocumentSymbolsRaw(requestParameters: LspDocumentSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspDocumentSymbolsRaw(requestParameters: LspDocumentSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<LspSymbol>>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1567,6 +1713,13 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
+        if (requestParameters['pathToProject'] == null) {
+            throw new runtime.RequiredError(
+                'pathToProject',
+                'Required parameter "pathToProject" was null or undefined when calling lspDocumentSymbols().'
+            );
+        }
+
         if (requestParameters['uri'] == null) {
             throw new runtime.RequiredError(
                 'uri',
@@ -1580,6 +1733,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             queryParameters['languageId'] = requestParameters['languageId'];
         }
 
+        if (requestParameters['pathToProject'] != null) {
+            queryParameters['pathToProject'] = requestParameters['pathToProject'];
+        }
+
         if (requestParameters['uri'] != null) {
             queryParameters['uri'] = requestParameters['uri'];
         }
@@ -1591,20 +1748,20 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/workspace/{workspaceId}/{projectId}/toolbox/lsp/documentSymbols`.replace(`{${"workspaceId"}}`, encodeURIComponent(String(requestParameters['workspaceId']))).replace(`{${"projectId"}}`, encodeURIComponent(String(requestParameters['projectId']))),
+            path: `/workspace/{workspaceId}/{projectId}/toolbox/lsp/documentsymbols`.replace(`{${"workspaceId"}}`, encodeURIComponent(String(requestParameters['workspaceId']))).replace(`{${"projectId"}}`, encodeURIComponent(String(requestParameters['projectId']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LspSymbolFromJSON));
     }
 
     /**
      * The document symbol request is sent from the client to the server.
      * Call Lsp DocumentSymbols
      */
-    async lspDocumentSymbols(requestParameters: LspDocumentSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async lspDocumentSymbols(requestParameters: LspDocumentSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<LspSymbol>> {
         const response = await this.lspDocumentSymbolsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -1613,7 +1770,7 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
      * Start Lsp server process inside workspace project
      * Start Lsp server
      */
-    async lspStartRaw(requestParameters: LspStartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspStartRaw(requestParameters: LspStartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1628,10 +1785,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['server'] == null) {
+        if (requestParameters['params'] == null) {
             throw new runtime.RequiredError(
-                'server',
-                'Required parameter "server" was null or undefined when calling lspStart().'
+                'params',
+                'Required parameter "params" was null or undefined when calling lspStart().'
             );
         }
 
@@ -1650,26 +1807,25 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: LspServerRequestToJSON(requestParameters['server']),
+            body: LspServerRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Start Lsp server process inside workspace project
      * Start Lsp server
      */
-    async lspStart(requestParameters: LspStartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.lspStartRaw(requestParameters, initOverrides);
-        return await response.value();
+    async lspStart(requestParameters: LspStartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.lspStartRaw(requestParameters, initOverrides);
     }
 
     /**
      * Stop Lsp server process inside workspace project
      * Stop Lsp server
      */
-    async lspStopRaw(requestParameters: LspStopRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspStopRaw(requestParameters: LspStopRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1684,10 +1840,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['server'] == null) {
+        if (requestParameters['params'] == null) {
             throw new runtime.RequiredError(
-                'server',
-                'Required parameter "server" was null or undefined when calling lspStop().'
+                'params',
+                'Required parameter "params" was null or undefined when calling lspStop().'
             );
         }
 
@@ -1706,26 +1862,25 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: LspServerRequestToJSON(requestParameters['server']),
+            body: LspServerRequestToJSON(requestParameters['params']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.VoidApiResponse(response);
     }
 
     /**
      * Stop Lsp server process inside workspace project
      * Stop Lsp server
      */
-    async lspStop(requestParameters: LspStopRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
-        const response = await this.lspStopRaw(requestParameters, initOverrides);
-        return await response.value();
+    async lspStop(requestParameters: LspStopRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.lspStopRaw(requestParameters, initOverrides);
     }
 
     /**
      * The workspace symbol request is sent from the client to the server to list project-wide symbols matching the query string.
      * Call Lsp WorkspaceSymbols
      */
-    async lspWorkspaceSymbolsRaw(requestParameters: LspWorkspaceSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Match>>> {
+    async lspWorkspaceSymbolsRaw(requestParameters: LspWorkspaceSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<LspSymbol>>> {
         if (requestParameters['workspaceId'] == null) {
             throw new runtime.RequiredError(
                 'workspaceId',
@@ -1747,6 +1902,13 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             );
         }
 
+        if (requestParameters['pathToProject'] == null) {
+            throw new runtime.RequiredError(
+                'pathToProject',
+                'Required parameter "pathToProject" was null or undefined when calling lspWorkspaceSymbols().'
+            );
+        }
+
         if (requestParameters['query'] == null) {
             throw new runtime.RequiredError(
                 'query',
@@ -1758,6 +1920,10 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
 
         if (requestParameters['languageId'] != null) {
             queryParameters['languageId'] = requestParameters['languageId'];
+        }
+
+        if (requestParameters['pathToProject'] != null) {
+            queryParameters['pathToProject'] = requestParameters['pathToProject'];
         }
 
         if (requestParameters['query'] != null) {
@@ -1777,14 +1943,14 @@ export class WorkspaceToolboxApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MatchFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LspSymbolFromJSON));
     }
 
     /**
      * The workspace symbol request is sent from the client to the server to list project-wide symbols matching the query string.
      * Call Lsp WorkspaceSymbols
      */
-    async lspWorkspaceSymbols(requestParameters: LspWorkspaceSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Match>> {
+    async lspWorkspaceSymbols(requestParameters: LspWorkspaceSymbolsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<LspSymbol>> {
         const response = await this.lspWorkspaceSymbolsRaw(requestParameters, initOverrides);
         return await response.value();
     }

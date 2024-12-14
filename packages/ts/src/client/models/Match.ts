@@ -24,25 +24,28 @@ export interface Match {
      * @type {string}
      * @memberof Match
      */
-    content?: string;
+    content: string;
     /**
      * 
      * @type {string}
      * @memberof Match
      */
-    file?: string;
+    file: string;
     /**
      * 
      * @type {number}
      * @memberof Match
      */
-    line?: number;
+    line: number;
 }
 
 /**
  * Check if a given object implements the Match interface.
  */
 export function instanceOfMatch(value: object): value is Match {
+    if (!('content' in value) || value['content'] === undefined) return false;
+    if (!('file' in value) || value['file'] === undefined) return false;
+    if (!('line' in value) || value['line'] === undefined) return false;
     return true;
 }
 
@@ -56,9 +59,9 @@ export function MatchFromJSONTyped(json: any, ignoreDiscriminator: boolean): Mat
     }
     return {
         
-        'content': json['content'] == null ? undefined : json['content'],
-        'file': json['file'] == null ? undefined : json['file'],
-        'line': json['line'] == null ? undefined : json['line'],
+        'content': json['content'],
+        'file': json['file'],
+        'line': json['line'],
     };
 }
 

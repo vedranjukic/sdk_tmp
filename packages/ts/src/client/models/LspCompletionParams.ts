@@ -13,27 +13,20 @@
  */
 
 import { mapValues } from '../runtime';
-import type { GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifier } from './GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifier';
+import type { CompletionContext } from './CompletionContext';
 import {
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierFromJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierFromJSONTyped,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierToJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierToJSONTyped,
-} from './GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifier';
-import type { GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContext } from './GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContext';
+    CompletionContextFromJSON,
+    CompletionContextFromJSONTyped,
+    CompletionContextToJSON,
+    CompletionContextToJSONTyped,
+} from './CompletionContext';
+import type { Position } from './Position';
 import {
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextFromJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextFromJSONTyped,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextToJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextToJSONTyped,
-} from './GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContext';
-import type { GithubComDaytonaioDaytonaPkgAgentToolboxLspPosition } from './GithubComDaytonaioDaytonaPkgAgentToolboxLspPosition';
-import {
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionFromJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionFromJSONTyped,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionToJSON,
-    GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionToJSONTyped,
-} from './GithubComDaytonaioDaytonaPkgAgentToolboxLspPosition';
+    PositionFromJSON,
+    PositionFromJSONTyped,
+    PositionToJSON,
+    PositionToJSONTyped,
+} from './Position';
 
 /**
  * 
@@ -43,10 +36,10 @@ import {
 export interface LspCompletionParams {
     /**
      * 
-     * @type {GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContext}
+     * @type {CompletionContext}
      * @memberof LspCompletionParams
      */
-    context?: GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContext;
+    context?: CompletionContext;
     /**
      * 
      * @type {string}
@@ -55,16 +48,22 @@ export interface LspCompletionParams {
     languageId: string;
     /**
      * 
-     * @type {GithubComDaytonaioDaytonaPkgAgentToolboxLspPosition}
+     * @type {string}
      * @memberof LspCompletionParams
      */
-    position?: GithubComDaytonaioDaytonaPkgAgentToolboxLspPosition;
+    pathToProject: string;
     /**
      * 
-     * @type {GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifier}
+     * @type {Position}
      * @memberof LspCompletionParams
      */
-    textDocument?: GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifier;
+    position: Position;
+    /**
+     * 
+     * @type {string}
+     * @memberof LspCompletionParams
+     */
+    uri: string;
 }
 
 /**
@@ -72,6 +71,9 @@ export interface LspCompletionParams {
  */
 export function instanceOfLspCompletionParams(value: object): value is LspCompletionParams {
     if (!('languageId' in value) || value['languageId'] === undefined) return false;
+    if (!('pathToProject' in value) || value['pathToProject'] === undefined) return false;
+    if (!('position' in value) || value['position'] === undefined) return false;
+    if (!('uri' in value) || value['uri'] === undefined) return false;
     return true;
 }
 
@@ -85,10 +87,11 @@ export function LspCompletionParamsFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'context': json['context'] == null ? undefined : GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextFromJSON(json['context']),
+        'context': json['context'] == null ? undefined : CompletionContextFromJSON(json['context']),
         'languageId': json['languageId'],
-        'position': json['position'] == null ? undefined : GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionFromJSON(json['position']),
-        'textDocument': json['textDocument'] == null ? undefined : GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierFromJSON(json['textDocument']),
+        'pathToProject': json['pathToProject'],
+        'position': PositionFromJSON(json['position']),
+        'uri': json['uri'],
     };
 }
 
@@ -103,10 +106,11 @@ export function LspCompletionParamsToJSONTyped(value?: LspCompletionParams | nul
 
     return {
         
-        'context': GithubComDaytonaioDaytonaPkgAgentToolboxLspCompletionContextToJSON(value['context']),
+        'context': CompletionContextToJSON(value['context']),
         'languageId': value['languageId'],
-        'position': GithubComDaytonaioDaytonaPkgAgentToolboxLspPositionToJSON(value['position']),
-        'textDocument': GithubComDaytonaioDaytonaPkgAgentToolboxLspTextDocumentIdentifierToJSON(value['textDocument']),
+        'pathToProject': value['pathToProject'],
+        'position': PositionToJSON(value['position']),
+        'uri': value['uri'],
     };
 }
 

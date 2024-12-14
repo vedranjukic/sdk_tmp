@@ -32,7 +32,7 @@ export interface ProjectState {
      * @type {GitStatus}
      * @memberof ProjectState
      */
-    gitStatus: GitStatus;
+    gitStatus?: GitStatus;
     /**
      * 
      * @type {string}
@@ -51,7 +51,6 @@ export interface ProjectState {
  * Check if a given object implements the ProjectState interface.
  */
 export function instanceOfProjectState(value: object): value is ProjectState {
-    if (!('gitStatus' in value) || value['gitStatus'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     if (!('uptime' in value) || value['uptime'] === undefined) return false;
     return true;
@@ -67,7 +66,7 @@ export function ProjectStateFromJSONTyped(json: any, ignoreDiscriminator: boolea
     }
     return {
         
-        'gitStatus': GitStatusFromJSON(json['gitStatus']),
+        'gitStatus': json['gitStatus'] == null ? undefined : GitStatusFromJSON(json['gitStatus']),
         'updatedAt': json['updatedAt'],
         'uptime': json['uptime'],
     };

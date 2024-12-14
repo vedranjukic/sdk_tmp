@@ -7,8 +7,9 @@
   },
   "scripts": {
     "generate-ts-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g typescript-fetch -o packages/ts/src/client --additional-properties=typescriptThreePlus=true,supportsES6=true",
+    "generate-python-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g python -o packages/python/daytona/gclient --additional-properties=packageName=daytonasdk,pythonVersion=3.9,library=urllib3,generateSourceCodeOnly=true,hideGenerationTimestamp=true",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "sh scripts/postinstall.sh",
+    "postinstall": "sh ./postinstall.sh",
     "exec-command-example": "npx dotenvx run -f .env.local -- npx ts-node examples/ts/exec-command/src/"
   },
   "workspaces": [

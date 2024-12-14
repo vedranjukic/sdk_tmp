@@ -30,6 +30,12 @@ export interface LspDocumentRequest {
      * @type {string}
      * @memberof LspDocumentRequest
      */
+    pathToProject: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LspDocumentRequest
+     */
     uri: string;
 }
 
@@ -38,6 +44,7 @@ export interface LspDocumentRequest {
  */
 export function instanceOfLspDocumentRequest(value: object): value is LspDocumentRequest {
     if (!('languageId' in value) || value['languageId'] === undefined) return false;
+    if (!('pathToProject' in value) || value['pathToProject'] === undefined) return false;
     if (!('uri' in value) || value['uri'] === undefined) return false;
     return true;
 }
@@ -53,6 +60,7 @@ export function LspDocumentRequestFromJSONTyped(json: any, ignoreDiscriminator: 
     return {
         
         'languageId': json['languageId'],
+        'pathToProject': json['pathToProject'],
         'uri': json['uri'],
     };
 }
@@ -69,6 +77,7 @@ export function LspDocumentRequestToJSONTyped(value?: LspDocumentRequest | null,
     return {
         
         'languageId': value['languageId'],
+        'pathToProject': value['pathToProject'],
         'uri': value['uri'],
     };
 }
