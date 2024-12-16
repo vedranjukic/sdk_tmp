@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: daytona_sdk
+Version: 0.1.0
+Summary: Python SDK for Daytona
+Author-email: Vedran Jukic <vedran.jukic@gmail.com>
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown

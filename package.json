@@ -1,24 +1,24 @@
 {
-  "private": true,
-  "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.15.3",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0"
-  },
-  "scripts": {
-    "generate-ts-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g typescript-fetch -o packages/ts/src/client --additional-properties=typescriptThreePlus=true,supportsES6=true",
-    "generate-python-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g python -o packages/python/daytona/gclient --additional-properties=packageName=daytonasdk,pythonVersion=3.9,library=urllib3,generateSourceCodeOnly=true,hideGenerationTimestamp=true",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "sh ./postinstall.sh",
-    "exec-command-example": "npx dotenvx run -f .env.local -- npx ts-node examples/ts/exec-command/src/"
-  },
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@dotenvx/dotenvx": "^1.25.1"
+    "private": true,
+    "devDependencies": {
+      "@openapitools/openapi-generator-cli": "^2.15.3",
+      "ts-node": "^10.9.2",
+      "tsconfig-paths": "^4.2.0"
+    },
+    "scripts": {
+      "generate-ts-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g typescript-fetch -o packages/ts/src/client --additional-properties=typescriptThreePlus=true,supportsES6=true",
+      "generate-python-client": "npx openapi-generator-cli generate -i hack/openapi/openapi.json -g python -o packages/python/src --additional-properties=packageName=apiclient,pythonVersion=3.9,library=urllib3,generateSourceCodeOnly=true,hideGenerationTimestamp=true",
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "postinstall": "sh ./postinstall.sh",
+      "exec-command-example": "npx dotenvx run -f .env.local -- npx ts-node examples/ts/exec-command/src/"
+    },
+    "workspaces": [
+      "packages/*",
+      "examples/*"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "@dotenvx/dotenvx": "^1.25.1"
+    }
   }
-}

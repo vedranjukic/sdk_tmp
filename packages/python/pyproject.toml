@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "daytona_sdk"
+version = "0.1.0"
+authors = [
+    { name = "Vedran Jukic", email = "vedran.jukic@gmail.com" },
+]
+description = "Python SDK for Daytona"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    # Add your dependencies here
+] 

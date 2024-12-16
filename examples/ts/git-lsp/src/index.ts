@@ -15,7 +15,7 @@ async function main() {
     const projectDir = path.join(rootDir, 'learn-typescript')
 
     //  clone the repository
-    await workspace.git.clone('https://github.com/panaverse/learn-typescript', projectDir);
+    await workspace.git.clone('https://github.com/panaverse/learn-typescript', projectDir, 'master');
 
     //  search for the file we want to work on
     const matches = await workspace.fs.findFiles(projectDir, 'var obj1 = new Base();');
