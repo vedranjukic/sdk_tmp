@@ -1,3 +1,6 @@
-from .daytona import Daytona
+from .daytona import (
+    Daytona,
+    CreateWorkspaceParams,
+)
 
-__all__ = ["Daytona"]
+__all__ = ["Daytona", "CreateWorkspaceParams"]

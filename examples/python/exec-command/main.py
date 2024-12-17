@@ -1,11 +1,8 @@
-from daytona_sdk import Daytona
-from daytona_sdk.daytona import CreateWorkspaceParams
+from daytona_sdk import Daytona, CreateWorkspaceParams
 
 daytona = Daytona()
 
-params = CreateWorkspaceParams(
-    language='python'
-)
+params = CreateWorkspaceParams(language="python")
 workspace = daytona.create()
 
 response = workspace.process.code_run('print("Sum of 3 and 4 is " + str(3 + 4))')

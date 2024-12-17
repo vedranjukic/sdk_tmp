@@ -1,68 +1,54 @@
 {
-    "name": "BlinkBox App",
-    "dockerFile": "Dockerfile",
-  
-    // Configure tool-specific properties.
-    "customizations": {
-      // Configure properties specific to VS Code.
-      "vscode": {
-        // Add the IDs of extensions you want installed when the container is created.
-        "extensions": [
-          "dbaeumer.vscode-eslint",
-          "esbenp.prettier-vscode",
-          "nrwl.angular-console",
-          "ms-kubernetes-tools.vscode-kubernetes-tools",
-          "astro-build.astro-vscode",
-          "unifiedjs.vscode-mdx",
-          "timonwong.shellcheck",
-          "foxundermoon.shell-format",
-          "cschlosser.doxdocgen"
-        ],
-        "settings": {
-          "terminal.integrated.profiles.linux": {
-            "bash": {
-              "path": "bash",
-              "icon": "terminal-bash"
-            }
-          },
-          "terminal.integrated.defaultProfile.linux": "bash"
-        }
+  "name": "BlinkBox App",
+  "dockerFile": "Dockerfile",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "astro-build.astro-vscode",
+        "unifiedjs.vscode-mdx",
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "cschlosser.doxdocgen"
+      ],
+      "settings": {
+        "editor.tabSize": 2
       }
-    },
-  
-    "features": {
-      "ghcr.io/devcontainers/features/common-utils:1": {
-        "installZsh": "true",
-        "username": "daytona",
-        "uid": "1000",
-        "gid": "1000",
-        "upgradePackages": "false"
-      },
-      "ghcr.io/devcontainers/features/docker-in-docker:2.7.1": {
-        "version": "24.0.7",
-        "moby": false,
-        "dockerDashComposeVersion": "v2"
-      },
-      "ghcr.io/devcontainers/features/go:1.1.0": {
-        "version": "1.19.3"
-      },
-      "ghcr.io/devcontainers/features/node:1.1.1": {
-        "version": "20.12.2"
-      },
-      "ghcr.io/devcontainers/features/python:1": {}
-    },
-  
-    "initializeCommand": "",
-    "postStartCommand": "yarn",
-    "postAttachCommand": "",
-  
-    // Add this to automatically source the venv in new terminals
-    "postCreateCommand": "echo 'source ${containerWorkspaceFolder}/.venv/bin/activate' >> ~/.bashrc",
-  
-    // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "daytona",
-    "remoteEnv": {
-      "PYTHONPATH": "${containerWorkspaceFolder}/packages/python/src:${containerEnv:PYTHONPATH}"
     }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:1": {
+      "installZsh": "true",
+      "username": "daytona",
+      "uid": "1000",
+      "gid": "1000",
+      "upgradePackages": "false"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2.7.1": {
+      "version": "24.0.7",
+      "moby": false,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/go:1.1.0": {
+      "version": "1.19.3"
+    },
+    "ghcr.io/devcontainers/features/node:1.1.1": {
+      "version": "20.12.2"
+    },
+    "ghcr.io/devcontainers/features/python:1": {}
+  },
+  // Add this to automatically source the venv in new terminals
+  "postCreateCommand": {
+    "activate-env": "yarn && echo 'source ${containerWorkspaceFolder}/.venv/bin/activate' >> ~/.zshrc",
+    "copy-env": "cp .env .env.local"
+  },
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "daytona",
+  "remoteEnv": {
+    "PYTHONPATH": "${containerWorkspaceFolder}/packages/python/src:${containerEnv:PYTHONPATH}"
   }
-  
+}

@@ -2,9 +2,10 @@ import aiohttp
 from typing import Any, Dict, Optional
 from urllib.parse import urljoin
 
+
 class AsyncApiClient:
     def __init__(self, base_url: str, headers: Optional[Dict[str, str]] = None):
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url.rstrip("/")
         self.headers = headers or {}
         self.session = None
 
@@ -26,10 +27,10 @@ class AsyncApiClient:
             return await response.json()
 
     async def get(self, path: str, **kwargs) -> Any:
-        return await self.request('GET', path, **kwargs)
+        return await self.request("GET", path, **kwargs)
 
     async def post(self, path: str, **kwargs) -> Any:
-        return await self.request('POST', path, **kwargs)
+        return await self.request("POST", path, **kwargs)
 
     async def delete(self, path: str, **kwargs) -> Any:
-        return await self.request('DELETE', path, **kwargs) 
+        return await self.request("DELETE", path, **kwargs)
