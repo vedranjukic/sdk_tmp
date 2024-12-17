@@ -2,7 +2,7 @@ import { WorkspaceCodeToolbox } from "../Workspace";
 
 export class WorkspacePythonCodeToolbox implements WorkspaceCodeToolbox {
     public getDefaultImage(): string {
-        return 'ai-test:1'    //  todo: replace with python image
+        return 'daytonaio/ai-test:0.1.0'
     }
 
     public getRunCommand(code: string): string {

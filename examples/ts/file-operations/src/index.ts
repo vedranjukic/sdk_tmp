@@ -5,10 +5,7 @@ async function main() {
   const daytona = new Daytona();
 
   //  first, create a workspace
-  const workspace = await daytona.create({
-    language: 'python',
-    image: 'vedranjukic/dtn-ts-sandbox:1'
-  })
+  const workspace = await daytona.create()
 
   try {
     const rootDir = await workspace.getWorkspaceRootDir()

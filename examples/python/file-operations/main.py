@@ -6,11 +6,7 @@ from pathlib import Path
 daytona = Daytona()
 
 # First, create a workspace
-params = CreateWorkspaceParams(
-    language='python',
-    image='ai-test:1'
-)
-workspace = daytona.create(params)
+workspace = daytona.create()
 
 # Get workspace root directory
 root_dir = workspace.get_workspace_root_dir()

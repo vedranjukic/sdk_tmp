@@ -6,7 +6,6 @@ async function main() {
   //  first, create a workspace
   const workspace = await daytona.create({
     language: 'python',
-    image: 'ai-test:1'
   })
 
   try {
