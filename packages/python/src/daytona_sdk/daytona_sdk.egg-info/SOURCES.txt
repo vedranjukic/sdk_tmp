@@ -1,7 +1,0 @@
-README.md
-pyproject.toml
-setup.py
-src/sdk/daytona_sdk.egg-info/PKG-INFO
-src/sdk/daytona_sdk.egg-info/SOURCES.txt
-src/sdk/daytona_sdk.egg-info/dependency_links.txt
-src/sdk/daytona_sdk.egg-info/top_level.txt
