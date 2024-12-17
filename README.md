@@ -1,122 +1,99 @@
-# Daytona SDK for Python
+# Daytona SDK
+Official Python and TypeScript SDKs for interacting with Daytona, providing simple interfaces for managing development environments programmatically. This repository contains both SDK libraries, offering native integration options for Python and TypeScript/JavaScript applications.
 
-A Python SDK for interacting with Daytona Server API, providing a simple interface for workspace management, Git operations, file system operations, and language server protocol support.
+## About Daytona
+Daytona is a radically simple open source development environment manager that allows developers to spin up fully configured development environments with a single command. It eliminates the complexity of setting up development environments, whether they're local, remote, cloud-based, or on physical servers, supporting both x86 and ARM architectures.
 
-## Installation
+While Daytona offers a straightforward way to manage development environments, these SDKs bring that same power to your Python and TypeScript applications, enabling programmatic control over your development infrastructure.
 
-You can install the package using pip:
+## Why Daytona SDK?
+These SDKs extend Daytona's capabilities by allowing you to:
+- Integrate Daytona's functionality into your existing Python and TypeScript applications
+- Automate development environment creation and management
+- Programmatically handle workspace configurations
+- Manage Git operations and repository connections
+- Control file system operations within workspaces
+- Interface with language server protocols
+- Build custom tooling and automation around your development environments
+- Create isolated environments for running AI-generated code safely
+- Set up data processing pipelines with configurable compute resources
+- Deploy and test machine learning models in isolated environments
 
+## AI and Data Processing Use Cases
+Daytona SDKs excel in scenarios involving AI and data processing, offering flexible deployment options across multiple infrastructure providers and technologies:
+
+- **AI Code Execution**: Create isolated environments to safely run and test AI-generated code on your choice of infrastructure:
+  - Deploy identical environments across AWS, GCP, Azure, or any major cloud provider
+  - Leverage Kubernetes clusters for scalability
+  - Quickly create ephemeral environments for parallel code generation trajectories
+
+- **Data Processing Pipelines**: Configure and manage environments for data processing workflows:
+  - Choose optimal infrastructure based on data locality
+  - Enable distributed processing
+  - Scale across multiple cloud regions
+  - Support hybrid cloud deployments
+
+- **Resource Management**: Dynamically allocate compute resources based on workload requirements:
+  - Provision resources across different cloud providers
+  - Scale container resources on demand
+  - Manage Kubernetes cluster resources
+  - Support bare metal resource allocation
+
+- **Environment Isolation**: Ensure security when running untrusted code or processing sensitive data:
+  - Configurable isolation level: Sysbox, LVMs, VMs
+  - Provision dedicated VMs for enhanced isolation
+  - Deploy in private cloud environments
+  - Utilize network isolation features
+  - Implement cloud-specific security controls
+
+## SDK Examples
+
+### TypeScript/JavaScript
+
+Install the SDK:
+```bash
+npm install @daytona/sdk
+# or
+yarn add @daytona/sdk
+```
+
+Basic usage:
+```typescript
+import { Daytona } from '@daytona/sdk';
+
+// Initialize the Daytona client
+const daytona = new Daytona();
+
+// Create the workspace instance
+const workspace = await daytona.create({
+  language: 'typescript'
+});
+
+// Run the code securely inside the workspace
+const response = await workspace.process.code_run('console.log("Hello World!")');
+console.log(response.result);
+```
+
+### Python
+
+Install the SDK:
 ```bash
 pip install daytona-sdk
 ```
 
-## Quick Start
-
-Here's a simple example of using the SDK:
-
+Basic usage:
 ```python
 from daytona_sdk import Daytona
-from daytona_sdk.daytona import CreateWorkspaceParams
 
 # Initialize the Daytona client
 daytona = Daytona()
 
-# Create a workspace
-params = CreateWorkspaceParams(
-    language='python',
-    image='ai-test:1'
-)
-workspace = daytona.create(params)
+# Create the workspace instance
+workspace = daytona.create()
 
-try:
-    # Get workspace root directory
-    root_dir = workspace.get_workspace_root_dir()
-    
-    # Example: Clone a Git repository
-    workspace.git.clone(
-        url='https://github.com/example/repo',
-        path=root_dir
-    )
-    
-    # Example: Run some code
-    response = workspace.process.code_run('print("Hello World!")')
-    print(response.result)
-
-finally:
-    # Cleanup: Remove the workspace
-    daytona.remove(workspace)
-```
-
-## Features
-
-- **Workspace Management**: Create, manage and remove workspaces
-- **Git Operations**: Clone repositories, manage branches, and more
-- **File System Operations**: Upload, download, and manipulate files
-- **Language Server Protocol**: Interact with language servers for code intelligence
-- **Process Management**: Execute code and commands in workspaces
-
-## Configuration
-
-The SDK can be configured using environment variables or by passing a configuration object:
-
-```python
-from daytona_sdk import Daytona
-from daytona_sdk.daytona import DaytonaConfig
-
-config = DaytonaConfig(
-    api_key='your-api-key',
-    server_url='https://your-daytona-server',
-    target='your-target'
-)
-
-daytona = Daytona(config)
-```
-
-Or using environment variables:
-- `DAYTONA_API_KEY`: Your Daytona API key
-- `DAYTONA_SERVER_URL`: The Daytona server URL
-- `DAYTONA_TARGET`: Your target environment
-
-## Examples
-
-### File Operations
-
-```python
-# Upload a file
-workspace.fs.upload_file('/path/to/file.txt', b'Hello, World!')
-
-# Download a file
-content = workspace.fs.download_file('/path/to/file.txt')
-
-# Search for files
-matches = workspace.fs.find_files(root_dir, 'search_pattern')
-```
-
-### Git Operations
-
-```python
-# Clone a repository
-workspace.git.clone('https://github.com/example/repo', '/path/to/clone')
-
-# List branches
-branches = workspace.git.branches('/path/to/repo')
-
-# Add files
-workspace.git.add('/path/to/repo', ['file1.txt', 'file2.txt'])
-```
-
-### Language Server Protocol
-
-```python
-# Create and start a language server
-lsp = workspace.create_lsp_server('typescript', '/path/to/project')
-lsp.start()
-
-# Get document symbols
-symbols = lsp.document_symbols('/path/to/file.ts')
-
-# Get completions
-completions = lsp.completions('/path/to/file.ts', {"line": 10, "character": 15})
+# Run the code securely inside the workspace
+response = workspace.process.code_run('print("Hello World!")')
+print(response.result)
 ```
 
 ## Contributing
@@ -125,17 +102,23 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[Add your license information here]
+This project is licensed under the Apache License, Version 2.0 - see below for details:
+
+```
+Copyright 2024 Daytona
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
 
-This README provides a comprehensive overview of the SDK's capabilities and how to use them. You may want to customize it further by:
+For the full license text, please see the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
-1. Adding specific installation requirements
-2. Including more detailed configuration options
-3. Adding troubleshooting guides
-4. Including contribution guidelines
-5. Specifying the license
-6. Adding badges for build status, version, etc.
-7. Including links to full documentation if available
-
-Would you like me to modify any section or add additional information?
