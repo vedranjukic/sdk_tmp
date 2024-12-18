@@ -2,6 +2,33 @@
 
 A Python SDK for interacting with Daytona Server API, providing a simple interface for Daytona Workspace management, Git operations, file system operations, and language server protocol support.
 
+## Prerequisites
+
+Before using the Daytona SDK, you need to have a running Daytona server instance and proper configuration.
+
+### Server Installation
+
+For detailed instructions on installing and setting up the Daytona server, please refer to the official installation guide at:
+[https://github.com/daytonaio/daytona](https://github.com/daytonaio/daytona)
+
+### Configuration
+
+To use the SDK, you'll need two essential pieces of information:
+
+1. **Server Address**:
+
+   - Run `daytona server config` to get your server's configuration
+   - Look for the `API URL` value in the output
+   - For testing and development, you can use the FRP address provided
+   - For production environments, it's recommended to use a static address
+
+2. **API Key**:
+   - Generate a new API key by running:
+     ```bash
+     daytona api-key generate
+     ```
+   - Save this key securely as it will be needed to authenticate with the server
+
 ## Installation
 
 You can install the package using pip:
@@ -53,6 +80,7 @@ daytona = Daytona(config)
 ```
 
 Or using environment variables:
+
 - `DAYTONA_API_KEY`: Your Daytona API key
 - `DAYTONA_SERVER_URL`: The Daytona server URL
 - `DAYTONA_TARGET`: Your target environment
@@ -137,4 +165,3 @@ limitations under the License.
 ```
 
 For the full license text, please see the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
-
