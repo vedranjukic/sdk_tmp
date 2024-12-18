@@ -3,7 +3,7 @@
   "scripts": {
     "generate-api-clients": "sh ./hack/generate-api-clients.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "(is-ci || husky) && sh ./hack/postinstall.sh",
+    "postinstall": "(is-ci || husky) && ./hack/postinstall.sh",
     "format:ts": "prettier --write ./**/*.{ts,tsx}",
     "format:py": "black .",
     "format:all": "npm run format:ts && npm run format:py",

@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-# Create and activate a virtual environment first
-python3 -m venv .venv
-. .venv/bin/activate
-
 # Upgrade basic tools
+python3 -m ensurepip --upgrade
 python3 -m pip install --upgrade pip setuptools wheel black
 
 # Install dependencies
