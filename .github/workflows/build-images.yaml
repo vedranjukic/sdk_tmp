@@ -41,6 +41,6 @@ jobs:
           context: hack/workspace-images/${{ matrix.language}}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: daytonaio/ai-sdk-${{ matrix.language }}:${{ env.VERSION }}
+          tags: daytonaio/sdk-${{ matrix.language }}:${{ env.VERSION }}
           build-args: |
             "DAYTONA_VERSION=${{ env.VERSION }}"
