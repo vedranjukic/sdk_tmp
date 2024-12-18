@@ -1,6 +1,6 @@
 {
   "name": "@daytona/sdk",
-  "version": "1.0.0",
+  "version": "0.1.3",
   "description": "Daytona client library for AI Agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
