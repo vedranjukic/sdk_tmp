@@ -9,7 +9,7 @@ class WorkspaceCodeToolbox(Protocol):
 
 class WorkspacePythonCodeToolbox:
     def get_default_image(self) -> str:
-        return "ai-test:1"  # todo: replace with python image
+        return "daytonaio/ai-test:0.1.0"  # todo: replace with ts image
 
     def get_run_command(self, code: str) -> str:
         base64_code = base64.b64encode(code.encode()).decode()
